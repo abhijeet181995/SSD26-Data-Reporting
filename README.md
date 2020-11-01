@@ -1,4 +1,5 @@
 # SSD26-Data-Cleaning
 Reporting after data cleaning
-## 
-Check Basic Year Visualization
+## MONTH Visualization
+## YEAR Visualization
+## Pages Visulaizaion
