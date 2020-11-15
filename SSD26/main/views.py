@@ -1,7 +1,8 @@
 from django.shortcuts import render,redirect
-from .forms import UploadFileForm
+from .forms import FileFieldForm
 import matplotlib.pyplot as plt, mpld3
 import pandas as pd
+import os
 from collections import OrderedDict
 import bibtexparser
 import wordcloud
@@ -11,32 +12,44 @@ from wordcloud import WordCloud, STOPWORDS
 from django.http import HttpResponse
 
 
-def handle_uploaded_file(f):
-    with open('bibtext.txt', 'wb+') as destination:
-        for chunk in f.chunks():
-            destination.write(chunk)
+def handle_uploaded_file(files):
+    counter=1
+    for file in files:
+        name= "temp/"+"bibtext"+str(counter)+".txt"
+        with open(name, 'wb+') as destination:
+            for chunk in file.chunks():
+                destination.write(chunk)
+        counter+=1
+            
 
 
 def upload_file(request):
     if request.method == 'POST':
-        form = UploadFileForm(request.POST, request.FILES)
+        form = FileFieldForm(request.POST, request.FILES)
         if form.is_valid():
-            handle_uploaded_file(request.FILES['file'])
+            files = request.FILES.getlist('file_field')
+            handle_uploaded_file(files)
             return redirect('graph/')
     else:
-        form = UploadFileForm()
+        form = FileFieldForm()
     return render(request, 'upload.html', {'form': form})
 
 
 
 def graph(request):
-    with open('bibtext.txt','r',encoding='utf8') as bibtex_file:
-        bib_database = bibtexparser.load(bibtex_file)
-        df = pd.DataFrame(bib_database.entries)
-        pages_count = {}
-    
+    filelist = os.listdir('temp') 
+    df_list = [  ]
+    for file in filelist:
+        f = open('temp/'+file, encoding="utf-8")
+        bib_database = bibtexparser.load(f)
+        df_ENTRY = pd.DataFrame(bib_database.entries)
+        df_list.append(df_ENTRY)
+        f.close()
+    df = pd.concat(df_list)
+
     df.pages
     maxValue=0
+    pages_count = {}
     for i in df.pages:
         try:
             x,y = map(int,i.split('-'))
