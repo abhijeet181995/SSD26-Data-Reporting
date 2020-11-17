@@ -45,7 +45,8 @@ def graph(request):
         df_ENTRY = pd.DataFrame(bib_database.entries)
         df_list.append(df_ENTRY)
         f.close()
-    df = pd.concat(df_list)
+        os.remove('temp/'+file)
+    df = pd.concat(df_list,ignore_index=True)
 
     df.pages
     maxValue=0
