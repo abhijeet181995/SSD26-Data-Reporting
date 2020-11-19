@@ -16,6 +16,7 @@ def handle_uploaded_file(files):
     counter=1
     for file in files:
         name= "temp/"+"bibtext"+str(counter)+".txt"
+        os.makedirs(os.path.dirname(name), exist_ok=True)
         with open(name, 'wb+') as destination:
             for chunk in file.chunks():
                 destination.write(chunk)
