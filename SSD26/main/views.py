@@ -170,7 +170,7 @@ def plotHistoricalTrend(df):
     plt.legend()
     sortedCountDict = OrderedDict(sorted(totalCountDict.items(), key=lambda kv: kv[1]))
     fig2 = plt.figure(figsize = (12, 8))
-    plt.pie(sortedCountDict.values()[:5], labels = sortedCountDict.keys()[:5]) 
+    plt.pie(list(sortedCountDict.values())[:5], labels = list(sortedCountDict.keys())[:5]) 
     plt.title('Top 5 keywords ')
     return mpld3.fig_to_html(fig)+mpld3.fig_to_html(fig2)
 
@@ -197,7 +197,7 @@ def plotAuthor(df):
             author_count[author] = author_count.get(author,0)+1
     fig = plt.figure(figsize = (12, 8))
     sorted_author_count=OrderedDict(sorted(author_count.items(), key=lambda x: x[1]),reverse=True)
-    plt.pie(sorted_author_count.values()[:5], labels = sorted_author_count.keys()[:5]) 
+    plt.pie(list(sorted_author_count.values())[:5], labels = list(sorted_author_count.keys())[:5]) 
     plt.title('Most publishing author ')
     return mpld3.fig_to_html(fig)
 
