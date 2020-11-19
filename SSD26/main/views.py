@@ -130,7 +130,8 @@ def plotMonthYearAnalysis(df):
     ax.set_xlabel("Year")
     ax.set_ylabel("No.of Papers")
     fig4 = ax.get_figure()
-    return mpld3.fig_to_html(fig1) +mpld3.fig_to_html(fig2)+mpld3.fig_to_html(fig3)+mpld3.fig_to_html(fig4)
+
+    return mpld3.fig_to_html(fig1),mpld3.fig_to_html(fig2),mpld3.fig_to_html(fig3),mpld3.fig_to_html(fig4)
 
 def plotHistoricalTrend(df):
     keyWordDict={}
@@ -155,7 +156,7 @@ def plotHistoricalTrend(df):
 
 
     sortedKeyWord = OrderedDict(sorted(keyWordDict.items(), key=lambda kv: kv[1]['count'], reverse=True))
-    fig = plt.figure(figsize = (12, 8))
+    fig1 = plt.figure(figsize = (12, 8))
     totalCountDict={}
     for index, (key, value) in enumerate(sortedKeyWord.items()):
         # print(index, key, value)
@@ -172,7 +173,7 @@ def plotHistoricalTrend(df):
     fig2 = plt.figure(figsize = (12, 8))
     plt.pie(list(sortedCountDict.values())[:5], labels = list(sortedCountDict.keys())[:5]) 
     plt.title('Top 5 keywords ')
-    return mpld3.fig_to_html(fig)+mpld3.fig_to_html(fig2)
+    return mpld3.fig_to_html(fig1),mpld3.fig_to_html(fig2)
 
 
 def plotWordCloud(df):
@@ -214,10 +215,20 @@ def graph(request):
         os.remove('temp/'+file)
     df = pd.concat(df_list,ignore_index=True)
 
-    g=plotPagesCount(df)
-    g+=plotMonthYearAnalysis(df)
-    g+=plotHistoricalTrend(df)
-    g+=plotWordCloud(df)
-    g+=plotAuthor(df)
-    return render(request,'graph.html',{'graph':g})
+    args={}
+    graph1=plotPagesCount(df)
+    graph2,graph3,graph4,graph5=plotMonthYearAnalysis(df)
+    graph6,graph7=plotHistoricalTrend(df)
+    graph8=plotWordCloud(df)
+    graph9=plotAuthor(df)
+    args['graph1']=graph1
+    args['graph2']=graph2
+    args['graph3']=graph3
+    args['graph4']=graph4
+    args['graph5']=graph5
+    args['graph6']=graph6
+    args['graph7']=graph7
+    args['graph8']=graph8
+    args['graph9']=graph9
+    return render(request,'graph.html',args)
 
