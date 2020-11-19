@@ -1,3 +1,42 @@
+<style>
+	h1 {font-family: 'Courier New', Courier, monospace;}
+	body {text-align: center;
+	animation: 10000ms ease-in-out infinite color-change;}
+	form {display: inline-block;}
+  input[Type=Submit] {
+    padding:5px 15px; 
+    animation: 1000ms ease-in-out infinite color-change;
+    border:0 none;
+    cursor:pointer;
+    -webkit-border-radius: 5px;
+    border-radius: 5px; 
+  }
+
+	@keyframes color-change {
+  0% {
+    background-color: teal;
+  }
+  20% {
+    background-color: gold;
+  }
+  40% {
+    background-color: indianred;
+  }
+  60% {
+    background-color: violet;
+  }
+  80% {
+    background-color: green;
+  }
+  100% {
+    background-color: teal;
+  }
+}
+</style>
+
+
+<h1>Welcome to Data Reporting And Visualization</h1>
+<h2>Select the files</h2>
 <form method="POST" enctype="multipart/form-data">
 	{% csrf_token %}
 	{{ form.as_p }}
