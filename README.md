@@ -1,5 +1,29 @@
-# SSD26-Data-Cleaning
-Reporting after data cleaning
-## MONTH Visualization
-## YEAR Visualization
-## Pages Visulaizaion
+# Data-Visualization
+
+
+
+
+## Description
+Package 
+
+### 
+
+
+
+### Visualization
+
+## Dependecies
+- Matploilib
+- Pandas
+- bibtexparser
+- wordcloud
+- django
+
+## Installation
+
+```python
+pip install matploilib
+
+
+```
+
