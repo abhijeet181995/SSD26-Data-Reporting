@@ -62,15 +62,16 @@ def plotPagesCount(df):
     for i in df.pages:
         try:
             x,y = map(int,i.split('-'))
-            if(divider!=1):
-                temp=int((y-x)/divider)
-                pageWidthCluster=str(temp*divider)+"-"+str(temp*divider+divider-1)
-            else:
-                pageWidthCluster=str(y-x)
+            if(y-x>=0):
+                if(divider!=1):
+                    temp=int((y-x)/divider)
+                    pageWidthCluster=str(temp*divider)+"-"+str(temp*divider+divider-1)
+                else:
+                    pageWidthCluster=str(y-x)
                 pages_count[pageWidthCluster] = pages_count.get(pageWidthCluster,0)+1
         except:
             continue
-    od = OrderedDict(sorted(pages_count.items()))
+    od = OrderedDict(sorted(pages_count.items(), key=lambda x: int(x[0])))
 
     fig = plt.figure(figsize = (10, 5)) 
     plt.bar(list( od.keys() ), list( od.values() ), color ='royalblue',  width = 0.4) 
@@ -163,9 +164,19 @@ def plotHistoricalTrend(df):
     sortedKeyWord = OrderedDict(sorted(keyWordDict.items(), key=lambda kv: kv[1]['count'], reverse=True))
     fig1 = plt.figure(figsize = (12, 8))
     totalCountDict={}
+    maxY=-1 
+    minY=3000
     for index, (key, value) in enumerate(sortedKeyWord.items()):
-        # print(index, key, value)
-        temp = OrderedDict(sorted(value['yearsMap'].items(), key=lambda kv: kv[0]))
+        for key in value['yearsMap'].keys():
+            maxY =max(maxY,int(key))
+            minY =min(minY,int(key))
+        if index==5:
+            break 
+    for index, (key, value) in enumerate(sortedKeyWord.items()):
+        for x in range(minY, maxY+1):
+            if str(x) not in value['yearsMap']:
+                value['yearsMap'][x]=0
+        temp = OrderedDict(sorted(value['yearsMap'].items(), key=lambda kv: int(kv[0])))
         totalCountDict[key]=value['count']
         plt.plot(list(temp.keys()), list(temp.values()), label = key, marker='o')
         if index==5:
