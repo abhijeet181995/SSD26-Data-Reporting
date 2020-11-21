@@ -2,7 +2,7 @@
 - Bibtext files have huge amount of data, which can be advantageous to the users ( publisher, researchers, organisers, etc.)
 - This project aims at providing Visualizations of such important metrics of the bibtext file at a glance.
 
--Assumption:
+Assumption:
   - The user provides the file in IEEE bibtext format.
 
 - Description:
