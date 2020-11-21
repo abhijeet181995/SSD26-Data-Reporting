@@ -215,7 +215,12 @@ def plotAuthor(df):
             author_count[author] = author_count.get(author,0)+1
     fig = plt.figure(figsize = (12, 8))
     sorted_author_count=OrderedDict(sorted(author_count.items(), key=operator.itemgetter(1),reverse=True))
-    plt.pie(list(sorted_author_count.values())[:6], labels = list(sorted_author_count.keys())[:6],autopct='%1.1f%%') 
+    key=list(sorted_author_count.values())[:6]
+    total=sum(key)
+    def absolute_value(val):
+        a  = round(val/100.*total, 0)
+        return int(a)
+    plt.pie(key, labels = list(sorted_author_count.keys())[:6],autopct=absolute_value) 
     plt.title('Most publishing author ')
     return generateImage(fig)
 
