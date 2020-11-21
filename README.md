@@ -1,6 +1,8 @@
-# Data-Visulaization
+# Data-Visualization
 
+## Description
 
-## MONTH Visualization
-## YEAR Visualization
-## Pages Visulaizaion
+### Visualization
+
+## Dependecies
+
