@@ -2,6 +2,8 @@ from django.shortcuts import render,redirect
 from .forms import FileFieldForm
 import matplotlib.pyplot as plt, mpld3
 import pandas as pd
+import base64
+from io import BytesIO
 import os
 from collections import OrderedDict
 import bibtexparser
@@ -10,7 +12,11 @@ from wordcloud import WordCloud, STOPWORDS
 
 
 from django.http import HttpResponse
-
+def generateImage(fig):
+    tmpfile = BytesIO()
+    fig.savefig(tmpfile, format='png')
+    encoded = base64.b64encode(tmpfile.getvalue()).decode('utf-8')
+    return '<img src=\'data:image/png;base64,{}\'>'.format(encoded)
 
 def handle_uploaded_file(files):
     counter=1
@@ -70,8 +76,8 @@ def plotPagesCount(df):
     plt.bar(list( od.keys() ), list( od.values() ), color ='royalblue',  width = 0.4) 
     plt.xlabel("Pages") 
     plt.ylabel("Count") 
-    plt.title("Number of pages in different papers") 
-    return mpld3.fig_to_html(fig)
+    plt.title("Number of pages in different papers")
+    return generateImage(fig)
 
 def plotMonthYearAnalysis(df):
     month_to_paper = dict()
@@ -106,7 +112,7 @@ def plotMonthYearAnalysis(df):
     plt.xlabel("Year") 
     plt.ylabel("Count") 
     plt.title("Number of papers published in different years") 
-
+    
 
     
     months = list(sorted_month.keys())
@@ -131,29 +137,27 @@ def plotMonthYearAnalysis(df):
     ax.set_xlabel("Year")
     ax.set_ylabel("No.of Papers")
     fig4 = ax.get_figure()
-
-    return mpld3.fig_to_html(fig1),mpld3.fig_to_html(fig2),mpld3.fig_to_html(fig3),mpld3.fig_to_html(fig4)
-
+    return generateImage(fig1), generateImage(fig2), generateImage(fig3), generateImage(fig4)
+   
 def plotHistoricalTrend(df):
     keyWordDict={}
     for index, row in df.iterrows():
         for keyWord in row['keywords'].split(';'):
-            for individualWord in keyWord.split(' ') : 
-                lowercaseKey=individualWord.lower()
-                if lowercaseKey not in keyWordDict:
-                    keyWordDict[lowercaseKey]={
+            lowercaseKey=keyWord.lower()
+            if lowercaseKey not in keyWordDict:
+                keyWordDict[lowercaseKey]={
                         'count':1,
                         'yearsMap':{
                             row['year'] :1
                         }
                     }
-                else:
-                    oldMap=keyWordDict[lowercaseKey]
-                    oldMap['count']=oldMap['count']+1
-                    oldYearsMap=oldMap['yearsMap']
-                    oldYearsMap[row['year']]= oldYearsMap.get(row['year'],0)+1
-                    oldMap['yearsMap']=oldYearsMap
-                    keyWordDict[lowercaseKey]=oldMap
+            else:
+                oldMap=keyWordDict[lowercaseKey]
+                oldMap['count']=oldMap['count']+1
+                oldYearsMap=oldMap['yearsMap']
+                oldYearsMap[row['year']]= oldYearsMap.get(row['year'],0)+1
+                oldMap['yearsMap']=oldYearsMap
+                keyWordDict[lowercaseKey]=oldMap
 
 
     sortedKeyWord = OrderedDict(sorted(keyWordDict.items(), key=lambda kv: kv[1]['count'], reverse=True))
@@ -168,13 +172,13 @@ def plotHistoricalTrend(df):
             break
     plt.xlabel('Years')
     plt.ylabel('Count')
-    plt.title('Top 5 Keyword historical trend ')
+    plt.title('Top 6 Keyword historical trend ')
     plt.legend()
     sortedCountDict = OrderedDict(sorted(totalCountDict.items(), key=lambda kv: kv[1]))
     fig2 = plt.figure(figsize = (12, 8))
-    plt.pie(list(sortedCountDict.values())[:5], labels = list(sortedCountDict.keys())[:5]) 
-    plt.title('Top 5 keywords ')
-    return mpld3.fig_to_html(fig1),mpld3.fig_to_html(fig2)
+    plt.pie(list(sortedCountDict.values())[:6], labels = list(sortedCountDict.keys())[:6],autopct='%1.1f%%') 
+    plt.title('Top 6 keywords ')
+    return generateImage(fig1), generateImage(fig2)
 
 
 def plotWordCloud(df):
@@ -190,18 +194,18 @@ def plotWordCloud(df):
     plt.imshow(wordcloud) 
     plt.axis("off") 
     plt.tight_layout(pad = 0) 
-    return mpld3.fig_to_html(fig)
+    return generateImage(fig)
 
 def plotAuthor(df):
     author_count = {}
     for authors in df.author.dropna():
-        for author in authors.split('and'):
+        for author in authors.split(' and '):
             author_count[author] = author_count.get(author,0)+1
     fig = plt.figure(figsize = (12, 8))
     sorted_author_count=OrderedDict(sorted(author_count.items(), key=lambda x: x[1]),reverse=True)
-    plt.pie(list(sorted_author_count.values())[:5], labels = list(sorted_author_count.keys())[:5]) 
+    plt.pie(list(sorted_author_count.values())[:6], labels = list(sorted_author_count.keys())[:6],autopct='%1.1f%%') 
     plt.title('Most publishing author ')
-    return mpld3.fig_to_html(fig)
+    return generateImage(fig)
 
 
 def graph(request):
