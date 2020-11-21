@@ -1,5 +1,6 @@
 from django.shortcuts import render,redirect
 from .forms import FileFieldForm
+import operator
 import matplotlib.pyplot as plt, mpld3
 import pandas as pd
 import base64
@@ -213,7 +214,7 @@ def plotAuthor(df):
         for author in authors.split(' and '):
             author_count[author] = author_count.get(author,0)+1
     fig = plt.figure(figsize = (12, 8))
-    sorted_author_count=OrderedDict(sorted(author_count.items(), key=lambda x: x[1]),reverse=True)
+    sorted_author_count=OrderedDict(sorted(author_count.items(), key=operator.itemgetter(1),reverse=True))
     plt.pie(list(sorted_author_count.values())[:6], labels = list(sorted_author_count.keys())[:6],autopct='%1.1f%%') 
     plt.title('Most publishing author ')
     return generateImage(fig)
